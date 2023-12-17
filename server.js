@@ -29,6 +29,7 @@ app.use(express.json()) // it is a parser which will parse the data stream/Body 
  * 'use' is a middleware.
  */
 app.use("/api/contacts", require('./routes/contactRoutes'));
+app.use("/api/users", require('./routes/userRoutes'));
 app.use(errorHandler);
 
 app.listen(port, () => {
