@@ -35,6 +35,7 @@ const getContactByID = asynchHandler(async (req, res) => {
     console.log("ID: ", req.params.id);
     const contact = await Contact.findById(req.params.id);
     console.log(contact);
+    // TODO: response net getting in case of wrong ID.
     if(!contact){
         res.status(404);
         throw new Error("Contact not found. Please check the ID.")
@@ -49,7 +50,18 @@ const getContactByID = asynchHandler(async (req, res) => {
  * @param {*} res 
  */
 const deleteContact = asynchHandler(async (req, res) => {
-    res.status(200).json({ message: `Delete contact for ${req.params.id}` });
+    console.log("Delete: ", req.params.id);
+    const contact = await Contact.findById(req.params.id);
+    console.log("contact: ", contact);
+    if(!contact)
+    {
+        res.status(404);
+        throw new Error("Contact Not found");
+    }
+    await Contact.deleteOne({_id:req.params.id}, (err,foundcontact)=>{
+        if(!err) console.log(foundcontact);
+    });
+    res.status(200).json(contact);
 });
 
 /**
@@ -59,7 +71,17 @@ const deleteContact = asynchHandler(async (req, res) => {
  * @param {*} res 
  */
 const updateContact = asynchHandler(async (req, res) => {
-    res.status(200).json({ message: `Update contact for ${req.params.id}` });
+    const contact = Contact.findById(req.params.id);
+    if(!contact) {
+        res.status(404);
+        throw new Error("No contact found");
+    }
+    const updatedContact = await Contact.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {new:true}
+    )
+    res.status(200).json(updatedContact);
 });
 
 /**
